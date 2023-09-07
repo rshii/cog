@@ -283,6 +283,17 @@ cog_launcher_create_view(CogLauncher *self, CogShell *shell)
                      "zoom-level", s_options.scale_factor, "backend", view_backend, "is-controlled-by-automation",
                      cog_shell_is_automated(shell), NULL);
 
+    WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager(web_view);
+    WebKitUserScript *script = webkit_user_script_new( "function appendButtonWithUrl(text, url) { if (window.location.hostname == \'login.live.com\') { const button = document.createElement(\'button\'); button.textContent = text; button.addEventListener(\'click\', () => { window.location.href = url; }); button.style.backgroundColor = \"blue\"; button.style.color = \"white\"; button.style.border = \"none\"; button.style.padding = \"10px 20px\"; button.style.borderRadius = \"4px\"; button.style.fontWeight = \"bold\"; document.body.appendChild(button); } } setTimeout(function() { appendButtonWithUrl(\'Back to home screen\', \'http://localhost:3000\'); }, 500);",
+		    WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+		    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
+		    NULL,
+		    NULL
+		    );
+    webkit_user_content_manager_add_script (
+	  manager,
+	  script
+    );
     if (s_options.filter) {
         WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager(web_view);
         webkit_user_content_manager_add_filter(manager, s_options.filter);

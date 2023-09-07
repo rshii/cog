@@ -1097,63 +1097,6 @@ capture_app_key_bindings(CogWlPlatform *self, uint32_t keysym, uint32_t unicode,
     if (state != WL_KEYBOARD_KEY_STATE_PRESSED)
         return false;
 
-    /* fullscreen */
-    if (modifiers == 0 && unicode == 0 && keysym == XKB_KEY_F11) {
-#if HAVE_FULLSCREEN_HANDLING
-        if (win_data.is_fullscreen && win_data.was_fullscreen_requested_from_dom) {
-            wpe_view_backend_dispatch_request_exit_fullscreen(wpe_view_data.backend);
-            return true;
-        }
-#endif
-        cog_wl_set_fullscreen(0, !win_data.is_fullscreen);
-        return true;
-    }
-
-    /* Ctrl+W, exit the application */
-    if (modifiers == wpe_input_keyboard_modifier_control && unicode == 0x17 && keysym == 0x77) {
-        g_application_quit(app);
-        return true;
-    }
-
-    /* Ctrl+Plus, zoom in */
-    if (modifiers == wpe_input_keyboard_modifier_control && unicode == XKB_KEY_equal && keysym == XKB_KEY_equal) {
-        const double level = webkit_web_view_get_zoom_level(self->web_view);
-        webkit_web_view_set_zoom_level(self->web_view, level + DEFAULT_ZOOM_STEP);
-        return true;
-    }
-
-    /* Ctrl+Minus, zoom out */
-    if (modifiers == wpe_input_keyboard_modifier_control && unicode == 0x2D && keysym == 0x2D) {
-        const double level = webkit_web_view_get_zoom_level(self->web_view);
-        webkit_web_view_set_zoom_level(self->web_view, level - DEFAULT_ZOOM_STEP);
-        return true;
-    }
-
-    /* Ctrl+0, restore zoom level to 1.0 */
-    if (modifiers == wpe_input_keyboard_modifier_control && unicode == XKB_KEY_0 && keysym == XKB_KEY_0) {
-        webkit_web_view_set_zoom_level(self->web_view, 1.0f);
-        return true;
-    }
-
-    /* Alt+Left, navigate back */
-    if (modifiers == wpe_input_keyboard_modifier_alt && unicode == 0 && keysym == XKB_KEY_Left) {
-        webkit_web_view_go_back(self->web_view);
-        return true;
-    }
-
-    /* Alt+Right, navigate forward */
-    if (modifiers == wpe_input_keyboard_modifier_alt && unicode == 0 && keysym == XKB_KEY_Right) {
-        webkit_web_view_go_forward(self->web_view);
-        return true;
-    }
-
-    /* Ctrl+R or F5, reload */
-    if ((modifiers == wpe_input_keyboard_modifier_control && unicode == 0x12 && keysym == 0x72) ||
-        (modifiers == 0 && unicode == 0 && keysym == XKB_KEY_F5)) {
-        webkit_web_view_reload(self->web_view);
-        return true;
-    }
-
     return false;
 }
 
